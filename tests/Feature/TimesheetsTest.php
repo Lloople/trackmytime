@@ -25,7 +25,8 @@ class TimesheetsTest extends TestCase
 
         $timesheet = Timesheet::first();
         $this->assertEquals($timesheet->user_id, $user->id);
-        $this->assertEquals($timesheet->end_at, null);
+        $this->assertNull($timesheet->end_at);
+        $this->assertNull($timesheet->duration);
         $this->assertNotNull($timesheet->start_at);
         $this->assertEquals($timesheet->comment, 'Put Captain Solo in the cargo hold.');
     }
@@ -53,6 +54,7 @@ class TimesheetsTest extends TestCase
         $this->assertEquals($timesheet->user_id, $user->id);
         $this->assertNotNull($timesheet->end_at);
         $this->assertNotNull($timesheet->start_at);
+        $this->assertEquals($timesheet->duration, $timesheet->end_at->diffInMinutes($timesheet->start_at));
         $this->assertEquals($timesheet->comment, 'Put Captain Solo in the cargo hold.');
     }
 }

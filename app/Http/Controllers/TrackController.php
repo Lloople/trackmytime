@@ -6,12 +6,6 @@ use Illuminate\Http\Request;
 
 class TrackController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(Request $request)
     {
         $timesheet = auth()->user()->timesheets()->where('end_at', null)->first();
@@ -19,7 +13,8 @@ class TrackController extends Controller
         if ($timesheet) {
             $timesheet->update([
                 'end_at' => now(),
-                'comment' => $request->input('comment', $timesheet->comment)
+                'comment' => $request->input('comment', $timesheet->comment),
+                'duration' => now()->diffInMinutes($timesheet->start_at)
             ]);
 
             return response(null, 200);
