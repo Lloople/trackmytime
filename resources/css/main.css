@@ -2,4 +2,107 @@
 
 @tailwind components;
 
+@import url(https://fonts.googleapis.com/css?family=Nunito);
+
+html, body {
+    background-color: #fff;
+    color: #636b6f;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 200;
+    height: 100vh;
+    margin: 0;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+.flex-center {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.position-ref {
+    position: relative;
+}
+
+.top-right {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+}
+
+.content {
+    text-align: center;
+}
+
+.title {
+    font-size: 84px;
+}
+
+.links > a {
+    color: #636b6f;
+    padding: 0 25px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.card {
+    @apply .w-3/4 .mx-auto .bg-white .p-16 .pt-0 .rounded .shadow-md;
+}
+
+.card-title {
+    @apply .text-5xl .font-bold .mx-auto .text-center;
+}
+
+.card-row {
+    @apply .flex .flex-wrap .-mx-3 .mb-2;
+}
+
+.form-input-container {
+    @apply .w-full .px-3;
+}
+
+@screen md {
+    .form-input-container {
+        @apply .w-1/2;
+    }
+}
+
+.form-input-label {
+    @apply .block .uppercase .tracking-wide .text-gray-700 .text-xs .font-bold .mb-2;
+}
+
+.form-input {
+    @apply .appearance-none .block .w-full .bg-gray-200 .text-gray-700 .border .border-gray-200 .rounded .py-3 .px-4 .leading-tight;
+}
+
+.form-input.form-input-error, .form-input.form-input-error:focus {
+    @apply .border-red-500;
+}
+
+.form-input:focus {
+    @apply .outline-none .bg-white .border-gray-500;
+}
+
+.form-input-error-message {
+    @apply .text-red-500 .text-xs .italic;
+}
+
+.button {
+    @apply .bg-orange-500 .text-white .font-bold .py-2 .px-4 .rounded .appearance-none;
+}
+
+.button:hover {
+    @apply .bg-orange-400
+}
+
+.button-block {
+    @apply .block .w-full;
+}
+
 @tailwind utilities;
