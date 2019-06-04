@@ -11,7 +11,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'timezone'
     ];
 
     protected $hidden = [
@@ -39,12 +39,9 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    public function getNextTimesheetAction()
+    public function totalHoursToday()
     {
-        $timesheet = auth()->user()->timesheets()->orderBy('created_at', 'DESC')->first();
-
-        return $timesheet === null || ! $timesheet->is_start
-            ? Timesheet::START
-            : Timesheet::END;
+        return floor($this->timesheets()->whereDate('start_at', now()->format('Y-m-d'))->sum('duration') / 60);
     }
+
 }

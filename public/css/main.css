@@ -690,7 +690,6 @@ html, body {
   font-weight: 700;
   margin-left: auto;
   margin-right: auto;
-  text-align: center;
 }
 
 .card-row {
@@ -758,7 +757,7 @@ html, body {
 }
 
 .button {
-  background-color: #ed8936;
+  background-color: #38b2ac;
   color: #fff;
   font-weight: 700;
   padding-top: 0.5rem;
@@ -772,12 +771,32 @@ html, body {
 }
 
 .button:hover {
-  background-color: #f6ad55
+  background-color: #4fd1c5
 }
 
 .button-block {
   display: block;
   width: 100%;
+}
+
+.table-stripped tbody tr:nth-child(even) {
+  background-color: #edf2f7;
+}
+
+.table tr th {
+  text-align: left;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #2d3748;
+}
+
+.table td, .table th {
+  padding: 0.5rem;
+}
+
+.table tbody tr:hover {
+  background-color: #e6fffa;
+  cursor: pointer;
 }
 
 .appearance-none {

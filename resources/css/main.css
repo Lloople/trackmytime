@@ -56,7 +56,7 @@ html, body {
 }
 
 .card-title {
-    @apply .text-5xl .font-bold .mx-auto .text-center;
+    @apply .text-5xl .font-bold .mx-auto;
 }
 
 .card-row {
@@ -94,15 +94,31 @@ html, body {
 }
 
 .button {
-    @apply .bg-orange-500 .text-white .font-bold .py-2 .px-4 .rounded .appearance-none;
+    @apply .bg-teal-500 .text-white .font-bold .py-2 .px-4 .rounded .appearance-none;
 }
 
 .button:hover {
-    @apply .bg-orange-400
+    @apply .bg-teal-400
 }
 
 .button-block {
     @apply .block .w-full;
+}
+
+.table-stripped tbody tr:nth-child(even) {
+    @apply .bg-gray-200;
+}
+
+.table tr th {
+    @apply .text-left .uppercase .font-extrabold .text-gray-800;
+}
+
+.table td, .table th {
+    @apply .p-2;
+}
+
+.table tbody tr:hover {
+    @apply .bg-teal-100 .cursor-pointer;
 }
 
 @tailwind utilities;

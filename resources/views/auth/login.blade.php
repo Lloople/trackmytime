@@ -12,7 +12,7 @@
                 <label class="form-input-label" for="email">
                     E-mail
                 </label>
-                <input class="form-input @error('email') form-input-error @enderror" id="email" type="email"
+                <input class="form-input @error('email') form-input-error @enderror" name="email" id="email" type="email"
                        placeholder="bobafett@mandalorian.sw">
                 @error('email')
                 <p class="form-input-error-message">{{ $message }}</p>
@@ -22,7 +22,7 @@
                 <label class="form-input-label" for="password">
                     Password
                 </label>
-                <input class="form-input @error('password') form-input-error @enderror" id="password" type="password" placeholder="**************">
+                <input class="form-input @error('password') form-input-error @enderror" name="password" id="password" type="password" placeholder="**************">
                 @error('password')
                 <p class="form-input-error-message">{{ $message }}</p>
                 @enderror

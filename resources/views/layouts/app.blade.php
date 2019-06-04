@@ -39,6 +39,17 @@
                     <a href="{{ route('register') }}" class="block mt-4 lg:inline-block lg:mt-0">
                         Register
                     </a>
+                    @else
+                    <a href="{{-- route('profile') --}}" class="block mt-4 lg:inline-block lg:mt-0 font-bold">
+                        {{ auth()->user()->name }}
+                    </a>
+                    <a href="{{ route('logout') }}" class="block mt-4 lg:inline-block lg:mt-0 mr-4" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Logout
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                     @endguest
                 </div>
             </div>
