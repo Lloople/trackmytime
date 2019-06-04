@@ -16,7 +16,9 @@ class CreateTimesheetsTable extends Migration
         Schema::create('timesheets', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id')->unsigned();
-            $table->enum('action', ['START', 'END']);
+            $table->integer('duration')->nullable();
+            $table->timestamp('start_at', 0);
+            $table->timestamp('end_at', 0)->nullable();
             $table->text('comment')->nullable();
             $table->timestamps();
         });
