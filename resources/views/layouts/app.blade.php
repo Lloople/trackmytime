@@ -22,8 +22,8 @@
 <body class="bg-gray-200 h-screen">
     <div id="app">
         <nav class="flex items-center justify-between flex-wrap p-6">
-            <div class="flex flex-grow items-center flex-shrink-0 mr-6">
-                <a href="{{ route('welcome') }}" class="font-semibold text-xl tracking-tight">{{ config('app.name', 'Laravel') }}</a>
+            <div class="flex flex-grow items-center flex-shrink-0 mr-6 text-2xl">
+                <a href="{{ route('welcome') }}" class="font-semibold text-xl tracking-tight">🕐 {{ config('app.name', 'Laravel') }}</a>
             </div>
             <div class="block lg:hidden">
                 <button class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400">

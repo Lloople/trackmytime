@@ -32,4 +32,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Timesheet::class);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Methods
+    |--------------------------------------------------------------------------
+    */
+
+    public function getNextTimesheetAction()
+    {
+        $timesheet = auth()->user()->timesheets()->orderBy('created_at', 'DESC')->first();
+
+        return $timesheet === null || ! $timesheet->is_start
+            ? Timesheet::START
+            : Timesheet::END;
+    }
 }

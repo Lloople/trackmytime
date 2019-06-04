@@ -1,5 +1,5 @@
 <?php
 
-use App\Http\Controllers\TrackController;
+use App\Http\Controllers\Tracking\ToggleController;
 
-Route::post('track', TrackController::class)->name('track.toggle');
+Route::post('track', ToggleController::class)->name('track.toggle');
