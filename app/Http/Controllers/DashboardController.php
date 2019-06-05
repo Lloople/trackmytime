@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TimesheetResource;
+
 class DashboardController extends Controller
 {
 
     public function __invoke()
     {
+        $todayTimesheets = auth()->user()->timesheets()->whereDate('start_at', now()->format('Y-m-d'))->get();
+
         return view('dashboard', [
-            'totalToday' => auth()->user()->totalHoursToday(),
-            'todayRegisters' => auth()->user()->timesheets()->whereDate('start_at', now()->format('Y-m-d'))->get()
+            'totalToday' => floor($todayTimesheets->sum('duration') / 60),
+            'todayRegisters' => TimesheetResource::collection($todayTimesheets)
         ]);
     }
 }

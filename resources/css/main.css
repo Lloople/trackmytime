@@ -52,7 +52,7 @@ html, body {
 }
 
 .card {
-    @apply .w-3/4 .mx-auto .bg-white .p-16 .pt-0 .rounded .shadow-md;
+    @apply .w-3/4 .mx-auto .bg-white .p-16 .pt-4 .rounded .shadow-md;
 }
 
 .card-title {
