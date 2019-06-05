@@ -12,7 +12,7 @@
                 <label class="form-input-label" for="name">
                     Name
                 </label>
-                <input class="form-input @error('name') form-input-error @enderror" id="name" type="text"
+                <input class="form-input @error('name') form-input-error @enderror" name="name" id="name" type="text"
                        placeholder="Boba Fett" value="{{ old('name') }}" autofocus>
                 @error('name')
                 <p class="form-input-error-message">{{ $message }}</p>
@@ -22,7 +22,7 @@
                 <label class="form-input-label" for="email">
                     E-mail
                 </label>
-                <input class="form-input @error('email') form-input-error @enderror" id="email" type="email"
+                <input class="form-input @error('email') form-input-error @enderror" name="email" id="email" type="email"
                        placeholder="bobafett@mandalorian.sw">
                 @error('email')
                 <p class="form-input-error-message">{{ $message }}</p>
@@ -34,7 +34,7 @@
                 <label class="form-input-label" for="password">
                     Password
                 </label>
-                <input class="form-input @error('password') form-input-error @enderror" id="password" type="password" placeholder="**************">
+                <input class="form-input @error('password') form-input-error @enderror" name="password" id="password" type="password" placeholder="**************">
                 @error('password')
                 <p class="form-input-error-message">{{ $message }}</p>
                 @else
@@ -45,7 +45,7 @@
                 <label class="form-input-label" for="password-confirmation">
                     Repeat Password
                 </label>
-                <input class="form-input @error('password-confirmation') form-input-error @enderror" id="password-confirmation" type="password" placeholder="**************">
+                <input class="form-input @error('password-confirmation') form-input-error @enderror" name="password_confirmation" id="password-confirmation" type="password" placeholder="**************">
             </div>
         </div>
         <div class="card-row">
@@ -53,14 +53,14 @@
                 <label class="form-input-label" for="city">
                     City
                 </label>
-                <input class="form-input" id="city" type="text" placeholder="Coruscant">
+                <input class="form-input" name="city" id="city" type="text" placeholder="Coruscant">
             </div>
             <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label class="form-input-label" for="timezone">
                     Time Zone
                 </label>
                 <div class="relative">
-                    <select class="form-input" id="timezone">
+                    <select class="form-input" name="timezone" id="timezone">
                         @foreach(timezone_identifiers_list() as $text)
                             <option value="{{ $text }}">{{ $text }}</option>
                         @endforeach

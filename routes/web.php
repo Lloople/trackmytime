@@ -5,5 +5,3 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::auth();
-
-Route::get('/home', 'HomeController@index')->name('home');

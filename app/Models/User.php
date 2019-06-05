@@ -32,16 +32,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Timesheet::class);
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Methods
-    |--------------------------------------------------------------------------
-    */
-
-    public function totalHoursToday()
-    {
-        return floor($this->timesheets()->whereDate('start_at', now()->format('Y-m-d'))->sum('duration') / 60);
-    }
-
 }
