@@ -32,4 +32,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(Timesheet::class);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Methods
+    |--------------------------------------------------------------------------
+    */
+
+    public function startTracking()
+    {
+        $this->tracking_since = now();
+
+        return $this->save();
+
+    }
+
+    public function stopTracking()
+    {
+        $this->tracking_since = null;
+
+        return $this->save();
+    }
 }

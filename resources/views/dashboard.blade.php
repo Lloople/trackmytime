@@ -2,7 +2,8 @@
 
 @section('content')
     <div class="card">
-        <div class="card-title">Welcome, {{ auth()->user()->name }} 👋</div>
+        <div class="card-title w-full">Welcome, {{ auth()->user()->name }} 👋 <button class="button text-sm float-right">{{ $tracking ? 'STOP' : 'START' }}</button>
+        </div>
 
         @if (session('status'))
             <div class="alert alert-success" role="alert">
@@ -13,8 +14,7 @@
         <h2 class="text-3xl mt-8">
             @if ($totalToday)
 
-            You've worked <span class="font-black text-teal-500">{{ $totalToday }}</span> hours
-            today.
+            You've worked <span class="font-black text-teal-500">{{ $totalToday }}</span> hours today.
             @else
                 Today is empty. Maybe you forgot to track your time? 🤔
             @endif

@@ -9,23 +9,19 @@ class ToggleController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $timesheet = auth()->user()->timesheets()->where('end_at', null)->first();
-
-        if ($timesheet) {
-            $timesheet->update([
+        if (auth()->user()->tracking_since !== null) {
+            auth()->user()->timesheets()->create([
                 'end_at' => now(),
-                'comment' => $request->input('comment', $timesheet->comment),
-                'duration' => now()->diffInMinutes($timesheet->start_at)
+                'start_at' => auth()->user()->tracking_since,
+                'duration' => now()->diffInMinutes(auth()->user()->tracking_since)
             ]);
 
-            return response(null, 200);
+            auth()->user()->stopTracking();
+        } else {
+
+            auth()->user()->startTracking();
         }
 
-        $timesheet = auth()->user()->timesheets()->create([
-            'comment' => $request->input('comment', null),
-            'start_at' => now()
-        ]);
-
-        return response($timesheet->id, 201);
+        return response(null, 201);
     }
 }

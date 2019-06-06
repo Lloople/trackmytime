@@ -13,38 +13,26 @@ class ToggleTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function toggling_the_first_time_creates_a_start_timesheet()
+    public function toggling_the_first_time()
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->postJson(route('track.toggle'), [
-            'comment' => 'Put Captain Solo in the cargo hold.'
-        ]);
+        $response = $this->actingAs($user)->postJson(route('track.toggle'));
 
         $response->assertSuccessful();
 
-        $timesheet = Timesheet::first();
-        $this->assertEquals($timesheet->user_id, $user->id);
-        $this->assertNull($timesheet->end_at);
-        $this->assertNull($timesheet->duration);
-        $this->assertNotNull($timesheet->start_at);
-        $this->assertEquals($timesheet->comment, 'Put Captain Solo in the cargo hold.');
+        $this->assertDatabaseMissing('timesheets', ['user_id' => $user->id]);
+
+        $user->refresh();
+        $this->assertNotNull($user->tracking_since);
     }
 
     /** @test */
     public function toggling_the_second_time_fills_the_previously_created_timesheet()
     {
-        $user = factory(User::class)->create();
+        $user = factory(User::class)->create(['tracking_since' => now()->subHours(3)]);
 
-        $timesheet = factory(Timesheet::class)->create([
-            'user_id' => $user->id,
-            'comment' => 'He\'s no good to me dead.',
-            'start_at' => now()->subHours(3)
-        ]);
-
-        $response = $this->actingAs($user)->postJson(route('track.toggle'), [
-            'comment' => 'Put Captain Solo in the cargo hold.'
-        ]);
+        $response = $this->actingAs($user)->postJson(route('track.toggle'));
 
         $response->assertSuccessful();
 
@@ -55,6 +43,8 @@ class ToggleTest extends TestCase
         $this->assertNotNull($timesheet->end_at);
         $this->assertNotNull($timesheet->start_at);
         $this->assertEquals($timesheet->duration, $timesheet->end_at->diffInMinutes($timesheet->start_at));
-        $this->assertEquals($timesheet->comment, 'Put Captain Solo in the cargo hold.');
+
+        $user->refresh();
+        $this->assertNull($user->tracking_since);
     }
 }

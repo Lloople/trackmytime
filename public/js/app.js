@@ -49473,6 +49473,7 @@ files.keys().map(function (key) {
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.prototype.$bus = new Vue();
 var app = new Vue({
   el: '#app'
 });

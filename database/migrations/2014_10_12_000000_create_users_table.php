@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('city')->nullable();
             $table->string('timezone');
+            $table->timestamp('tracking_since')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
