@@ -2,7 +2,8 @@
 
 @section('content')
     <div class="card">
-        <div class="card-title w-full">Welcome, {{ auth()->user()->name }} 👋 <button class="button text-sm float-right">{{ $tracking ? 'STOP' : 'START' }}</button>
+        <div class="card-title w-full">Welcome, {{ auth()->user()->name }} 👋
+            <toggle-button tracking="{{ auth()->user()->tracking_since ?: 'null' }}"></toggle-button>
         </div>
 
         @if (session('status'))
