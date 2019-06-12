@@ -1874,17 +1874,17 @@ __webpack_require__.r(__webpack_exports__);
   mixins: [_mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__["timeFormat"]],
   props: {
     tracking: {
-      required: false
+      type: String
     }
   },
   data: function data() {
     return {
       elapsedTime: null,
-      buttonText: this.tracking === null ? 'START' : 'STOP'
+      buttonText: this.tracking === '' ? 'START' : 'STOP'
     };
   },
   mounted: function mounted() {
-    if (this.tracking !== null) {
+    if (this.tracking !== '') {
       this.startElapsedTimeInterval();
     }
   },
@@ -1895,6 +1895,13 @@ __webpack_require__.r(__webpack_exports__);
       setInterval(function () {
         _this.elapsedTime = _this.getElapsedTime(_this.tracking);
       }, 1000);
+    },
+    toggle: function toggle() {
+      axios.post('track/toggle').then(function (response) {
+        if (response.status === 201) {
+          window.location.reload();
+        }
+      });
     }
   }
 });
@@ -37235,9 +37242,11 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("button", { staticClass: "button text-sm float-right" }, [
-      _vm._v(_vm._s(_vm.buttonText) + "!")
-    ]),
+    _c(
+      "button",
+      { staticClass: "button text-sm float-right", on: { click: _vm.toggle } },
+      [_vm._v(_vm._s(_vm.buttonText) + "!")]
+    ),
     _vm._v(" "),
     _c("span", [_vm._v(_vm._s(_vm.elapsedTime))])
   ])
@@ -49771,10 +49780,7 @@ var timeFormat = {
   methods: {
     getElapsedTime: function getElapsedTime(start) {
       var seconds = Math.floor((new Date() - new Date(start)) / 1000);
-      return this.humanFormat(Math.floor(seconds / 60 / 60), Math.floor(seconds / 60 % 60), seconds % 60);
-    },
-    humanFormat: function humanFormat(hours, minutes, seconds) {
-      return "".concat(this.pad(hours), ":").concat(this.pad(minutes), ":").concat(this.pad(seconds));
+      return [this.pad(seconds / 60 / 60), this.pad(seconds / 60 % 60), this.pad(seconds % 60)].join(':');
     },
     pad: function pad(number) {
       return Math.floor(number).toString().padStart(2, '0');

@@ -3,7 +3,7 @@
 @section('content')
     <div class="card">
         <div class="card-title w-full">Welcome, {{ auth()->user()->name }} 👋
-            <toggle-button tracking="{{ auth()->user()->tracking_since ?: 'null' }}"></toggle-button>
+            <toggle-button tracking="{{ auth()->user()->tracking_since ?? '' }}"></toggle-button>
         </div>
 
         @if (session('status'))
