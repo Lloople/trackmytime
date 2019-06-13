@@ -81,6 +81,10 @@ html, body {
     @apply .appearance-none .block .w-full .bg-gray-200 .text-gray-700 .border .border-gray-200 .rounded .py-3 .px-4 .leading-tight;
 }
 
+.form-input-xs {
+   @apply .form-input .p-1
+}
+
 .form-input.form-input-error, .form-input.form-input-error:focus {
     @apply .border-red-500;
 }

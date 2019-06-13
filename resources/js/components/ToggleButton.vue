@@ -1,7 +1,7 @@
 <template>
     <div>
-        <button @click="toggle" class="button text-sm float-right">{{ buttonText }}!</button>
         <span>{{ elapsedTime }}</span>
+        <button @click="toggle" class="ml-2">{{ buttonText }}</button>
     </div>
 </template>
 
@@ -18,8 +18,8 @@
         },
         data() {
             return {
-                elapsedTime: null,
-                buttonText: this.tracking === '' ? 'START' : 'STOP'
+                elapsedTime: this.tracking === '' ? '00:00:00' : this.getElapsedTime(this.tracking),
+                buttonText: this.tracking === '' ? '▶️' : '⏸'
             }
         },
         mounted() {

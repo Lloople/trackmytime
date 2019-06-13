@@ -9,13 +9,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(row) in rows">
-            <td>{{ row.start_at }}</td>
-            <td>{{ row.end_at }}</td>
-            <td>{{ humanFormat(row.duration) }}</td>
-            <td>{{ row.comment }}</td>
-        </tr>
-
+        <tracking-table-row v-for="(row, index) in rows" :key="index" :element="row"></tracking-table-row>
         <tr v-if="rows.length === 0">
             <td>-</td>
             <td>-</td>
@@ -28,26 +22,24 @@
         <tr>
             <td></td>
             <th>Total</th>
-            <td>{{ humanFormat(totalDuration) }}</td>
+            <td>{{ minutesForHumans(totalDuration) }}</td>
         </tr>
         </tfoot>
     </table>
 </template>
 
 <script>
+    import { timeFormat} from "../mixins/timeFormat"
+
     export default {
         name: 'TrackingTable',
+        mixins: [timeFormat],
         props: {
             rows: Array
         },
         computed: {
             totalDuration: function () {
                 return this.rows.reduce((total, row) => { return total += row.duration }, 0)
-            },
-            humanFormat: function () {
-                return minutes => {
-                    return `${Math.floor(minutes / 60).toString().padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`
-                }
             }
         }
     }
