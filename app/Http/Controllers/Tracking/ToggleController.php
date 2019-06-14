@@ -12,7 +12,7 @@ class ToggleController extends Controller
             auth()->user()->timesheets()->create([
                 'end_at' => now(),
                 'start_at' => auth()->user()->tracking_since,
-                'duration' => now()->diffInMinutes(auth()->user()->tracking_since)
+                'duration' => now()->diffInMinutes(auth()->user()->tracking_since),
             ]);
 
             auth()->user()->stopTracking();

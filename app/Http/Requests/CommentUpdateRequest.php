@@ -24,7 +24,7 @@ class CommentUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'comment' => 'string'
+            'comment' => 'string',
         ];
     }
 }

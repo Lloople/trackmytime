@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
         return view('dashboard', [
             'totalToday' => floor($todayTimesheets->sum('duration') / 60),
-            'todayRegisters' => TimesheetResource::collection($todayTimesheets)
+            'todayRegisters' => TimesheetResource::collection($todayTimesheets),
         ]);
     }
 }

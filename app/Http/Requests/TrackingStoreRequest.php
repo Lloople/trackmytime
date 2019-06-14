@@ -15,7 +15,7 @@ class TrackingStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'start_at' => ['required', 'date']
+            'start_at' => ['required', 'date'],
         ];
     }
 

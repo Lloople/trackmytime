@@ -13,7 +13,10 @@ class Timesheet extends Model
     public const START = 'START';
     public const END = 'END';
 
-    public function getIsStartAttribute() { return $this->action === self::START; }
+    public function getIsStartAttribute()
+    {
+        return $this->action === self::START;
+    }
 
     public function getDurationForHumansAttribute()
     {

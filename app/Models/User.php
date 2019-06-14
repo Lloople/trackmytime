@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -11,7 +10,7 @@ class User extends Authenticatable
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'timezone', 'city'
+        'name', 'email', 'password', 'timezone', 'city',
     ];
 
     protected $hidden = [
@@ -44,7 +43,6 @@ class User extends Authenticatable
         $this->tracking_since = now();
 
         return $this->save();
-
     }
 
     public function stopTracking()
