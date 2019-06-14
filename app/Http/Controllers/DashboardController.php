@@ -9,7 +9,10 @@ class DashboardController extends Controller
 
     public function __invoke()
     {
-        $todayTimesheets = auth()->user()->timesheets()->whereDate('start_at', now()->format('Y-m-d'))->get();
+        $todayTimesheets = auth()->user()->timesheets()
+            ->whereDate('start_at', now()->format('Y-m-d'))
+            ->orWhereDate('end_at', now()->format('Y-m-d'))
+            ->get();
 
         return view('dashboard', [
             'totalToday' => floor($todayTimesheets->sum('duration') / 60),
