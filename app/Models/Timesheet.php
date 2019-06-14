@@ -10,8 +10,8 @@ class Timesheet extends Model
 
     protected $dates = ['end_at', 'start_at'];
 
-    const START = 'START';
-    const END = 'END';
+    public const START = 'START';
+    public const END = 'END';
 
     public function getIsStartAttribute() { return $this->action === self::START; }
 

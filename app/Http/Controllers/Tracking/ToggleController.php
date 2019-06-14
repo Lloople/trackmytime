@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Tracking;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class ToggleController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke()
     {
         if (auth()->user()->tracking_since !== null) {
             auth()->user()->timesheets()->create([
