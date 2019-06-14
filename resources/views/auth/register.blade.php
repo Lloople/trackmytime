@@ -23,7 +23,8 @@
                     E-mail
                 </label>
                 <input class="form-input @error('email') form-input-error @enderror" name="email" id="email" type="email"
-                       placeholder="bobafett@mandalorian.sw">
+                       placeholder="bobafett@mandalorian.sw"
+                        value="{{ old('email') }}">
                 @error('email')
                 <p class="form-input-error-message">{{ $message }}</p>
                 @enderror
@@ -53,7 +54,7 @@
                 <label class="form-input-label" for="city">
                     City
                 </label>
-                <input class="form-input" name="city" id="city" type="text" placeholder="Coruscant">
+                <input class="form-input" name="city" id="city" type="text" placeholder="Coruscant" value="{{ old('city') }}">
             </div>
             <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label class="form-input-label" for="timezone">
@@ -62,7 +63,7 @@
                 <div class="relative">
                     <select class="form-input" name="timezone" id="timezone">
                         @foreach(timezone_identifiers_list() as $text)
-                            <option value="{{ $text }}">{{ $text }}</option>
+                            <option value="{{ $text }}" @if($text === old('timezone')) selected @endif>{{ $text }}</option>
                         @endforeach
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
@@ -74,9 +75,7 @@
             </div>
             <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label class="form-input-label" for="">&nbsp;</label>
-                <button class="button button-block block w-full">
-                    REGISTER
-                </button>
+                <button class="button button-block block w-full">REGISTER</button>
             </div>
         </div>
     </form>
