@@ -18,7 +18,7 @@ class RegisterTest extends DuskTestCase
         factory(User::class)->create(['email' => 'registered@tmt.com']);
 
         $this->browse(function (Browser $browser) {
-            $browser->visitRoute('register')
+            $browser->visit('/register')
                 ->type('email', 'registered@tmt.com')
                 ->type('name', 'User')
                 ->type('password', 'trackmytime')
@@ -35,7 +35,7 @@ class RegisterTest extends DuskTestCase
     public function can_register_a_user()
     {
         $this->browse(function (Browser $browser) {
-            $browser->visitRoute('register')
+            $browser->visit('/register')
                 ->type('email', 'user@tmt.com')
                 ->type('name', 'User')
                 ->type('password', 'trackmytime')
