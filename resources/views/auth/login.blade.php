@@ -29,9 +29,7 @@
             </div>
             <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0 mx-auto">
                 <label class="form-input-label" for="">&nbsp;</label>
-                <button class="button button-block block w-full">
-                    LOGIN
-                </button>
+                <button class="button button-block block w-full">LOGIN</button>
             </div>
         </div>
     </form>
