@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Tracking;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\TrackingStoreRequest;
+use App\Http\Requests\TimesheetStoreRequest;
 
-class TrackingStoreController extends Controller
+class TimesheetStoreController extends Controller
 {
-    public function __invoke(TrackingStoreRequest $request)
+    public function __invoke(TimesheetStoreRequest $request)
     {
         $timesheet = auth()->user()->timesheets()->create([
             'comment' => $request->input('comment', null),

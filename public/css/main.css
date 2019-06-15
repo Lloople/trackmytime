@@ -775,9 +775,30 @@ html, body {
   font-style: italic;
 }
 
+.form-input-table {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  display: block;
+  width: 100%;
+  background-color: #edf2f7;
+  color: #4a5568;
+  border-width: 1px;
+  border-color: #edf2f7;
+  border-radius: 0.25rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  line-height: 1.25;
+  padding: 0.25rem;
+  border-width: 1px;
+  border-color: #e2e8f0;
+  line-height: 1.5;
+  background-color: #fff;
+}
+
 .button {
-  background-color: #38b2ac;
-  color: #fff;
   font-weight: 700;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -789,8 +810,14 @@ html, body {
           appearance: none;
 }
 
-.button:hover {
-  background-color: #4fd1c5
+.button-info {
+  background-color: #38b2ac;
+  color: #fff;
+}
+
+.button-info:hover {
+  background-color: #285e61;
+  color: #fff;
 }
 
 .button-block {
@@ -814,7 +841,7 @@ html, body {
 }
 
 .table tbody tr:hover {
-  background-color: #e6fffa;
+  background-color: #edf2f7;
   cursor: pointer;
 }
 

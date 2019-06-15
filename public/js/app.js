@@ -1851,6 +1851,52 @@ module.exports = function isBuffer (obj) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Dashboard.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Dashboard",
+  props: {
+    rows: Array,
+    day: String
+  },
+  data: function data() {
+    return {
+      total: this.rows.reduce(function (total, row) {
+        return total += row.duration;
+      }, 0)
+    };
+  },
+  computed: {
+    totalInHours: function totalInHours() {
+      return Math.floor(this.total / 60);
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ToggleButton.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ToggleButton.vue?vue&type=script&lang=js& ***!
@@ -1880,7 +1926,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       elapsedTime: this.tracking === '' ? '00:00:00' : this.getElapsedTime(this.tracking),
-      buttonText: this.tracking === '' ? '▶️' : '⏸'
+      buttonText: this.tracking === '' ? 'Start' : 'Stop'
     };
   },
   mounted: function mounted() {
@@ -1948,18 +1994,26 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'TrackingTable',
   mixins: [_mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__["timeFormat"]],
   props: {
-    rows: Array
+    rows: Array,
+    total: Number,
+    day: String
   },
-  computed: {
-    totalDuration: function totalDuration() {
-      return this.rows.reduce(function (total, row) {
-        return total += row.duration;
-      }, 0);
+  data: function data() {
+    return {
+      newRecord: false
+    };
+  },
+  methods: {
+    create: function create() {
+      this.newRecord = true;
     }
   }
 });
@@ -1976,6 +2030,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/timeFormat */ "./resources/js/mixins/timeFormat.js");
+//
 //
 //
 //
@@ -2033,6 +2088,109 @@ __webpack_require__.r(__webpack_exports__);
           _this2.commentHasError = true;
         }
       });
+    },
+    destroy: function destroy() {
+      if (!confirm("Are you sure you want to delete this record?")) {
+        return;
+      }
+
+      axios.post("timesheets/".concat(this.element.id), {
+        _method: 'DELETE'
+      }).then(function (response) {
+        if (response.status === 200) {
+          window.location.reload();
+        }
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&":
+/*!*********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js& ***!
+  \*********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/timeFormat */ "./resources/js/mixins/timeFormat.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "TrackingTableRowCreate",
+  mixins: [_mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__["timeFormat"]],
+  props: {
+    day: String
+  },
+  data: function data() {
+    return {
+      element: {
+        start_at: '',
+        end_at: '',
+        comment: ''
+      },
+      errors: []
+    };
+  },
+  computed: {
+    duration: function duration() {
+      if (this.element.start_at === '' || this.element.end_at === '') {
+        return '00:00';
+      } // TODO: There's a bug here, S 21:34 & E 22:50 marks 99:16 instead of 01:16
+
+
+      var minutesEndAt = this.element.end_at.split(':')[0] * 60 + this.element.end_at.split(':')[1];
+      var minutesStartAt = this.element.start_at.split(':')[0] * 60 + this.element.start_at.split(':')[1];
+      var duration = minutesEndAt - minutesStartAt;
+
+      if (duration < 0 || duration == null || !duration) {
+        return '00:00';
+      }
+
+      return this.minutesForHumans(duration);
+    }
+  },
+  methods: {
+    store: function store() {
+      if (!this.validateData()) {
+        return;
+      }
+
+      axios.post("timesheets", {
+        start_at: "".concat(this.day, " ").concat(this.element.start_at, ":00"),
+        end_at: "".concat(this.day, " ").concat(this.element.end_at, ":00"),
+        comment: this.element.comment
+      }).then(function (response) {
+        if (response.status === 201) {
+          window.location.reload();
+        }
+      });
+    },
+    validateData: function validateData() {
+      /**
+       * TODO: Missing validations
+       * start_at
+       *      !== ''
+       *      > 00:00
+       * end_at
+       *      !== ''
+       *      < [25]:[60]
+       * start_at < end_at
+       *
+       */
+      return this.errors.length === 0;
     }
   }
 });
@@ -37291,6 +37449,54 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("h2", { staticClass: "text-3xl mt-8" }, [
+        _vm.rows.length
+          ? _c("span", [
+              _vm._v("\n            You've worked "),
+              _c("span", { staticClass: "font-black text-teal-500" }, [
+                _vm._v(_vm._s(_vm.totalInHours))
+              ]),
+              _vm._v(" hours today.\n        ")
+            ])
+          : _c("span", [
+              _vm._v(
+                "\n            Today is empty. Maybe you forgot to track your time? 🤔\n        "
+              )
+            ])
+      ]),
+      _vm._v(" "),
+      _c("tracking-table", {
+        attrs: { rows: _vm.rows, total: _vm.total, day: _vm.day }
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ToggleButton.vue?vue&type=template&id=114f9ede&scoped=true&":
 /*!***************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ToggleButton.vue?vue&type=template&id=114f9ede&scoped=true& ***!
@@ -37306,12 +37512,17 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("span", [_vm._v(_vm._s(_vm.elapsedTime))]),
+  return _c("div", { staticClass: "flex flex-col text-center" }, [
+    _c(
+      "button",
+      {
+        staticClass: "ml-2 text-xs uppercase button button-info",
+        on: { click: _vm.toggle }
+      },
+      [_vm._v(_vm._s(_vm.buttonText) + " tracking")]
+    ),
     _vm._v(" "),
-    _c("button", { staticClass: "ml-2", on: { click: _vm.toggle } }, [
-      _vm._v(_vm._s(_vm.buttonText))
-    ])
+    _c("span", [_vm._v(_vm._s(_vm.elapsedTime))])
   ])
 }
 var staticRenderFns = []
@@ -37340,11 +37551,37 @@ var render = function() {
     "table",
     { staticClass: "table table-auto w-full mt-8 table-stripped" },
     [
-      _vm._m(0),
+      _c("thead", [
+        _c("tr", [
+          _c("th", { staticClass: "w-1/6" }, [_vm._v("Begin")]),
+          _vm._v(" "),
+          _c("th", { staticClass: "w-1/6" }, [_vm._v("End")]),
+          _vm._v(" "),
+          _c("th", { staticClass: "w-1/6" }, [_vm._v("Duration")]),
+          _vm._v(" "),
+          _c("th", { staticClass: "w-2/6" }, [_vm._v("Comment")]),
+          _vm._v(" "),
+          _c("th", { staticClass: "w-1/6" }, [
+            _c(
+              "button",
+              {
+                staticClass:
+                  "button text-xs button-block bg-white text-teal-500 hover:text-teal-800",
+                on: { click: _vm.create }
+              },
+              [_vm._v("CREATE")]
+            )
+          ])
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "tbody",
         [
+          _vm.newRecord
+            ? _c("tracking-table-row-create", { attrs: { day: _vm.day } })
+            : _vm._e(),
+          _vm._v(" "),
           _vm._l(_vm.rows, function(row, index) {
             return _c("tracking-table-row", {
               key: index,
@@ -37354,6 +37591,8 @@ var render = function() {
           _vm._v(" "),
           _vm.rows.length === 0
             ? _c("tr", [
+                _c("td", [_vm._v("-")]),
+                _vm._v(" "),
                 _c("td", [_vm._v("-")]),
                 _vm._v(" "),
                 _c("td", [_vm._v("-")]),
@@ -37374,33 +37613,14 @@ var render = function() {
               _vm._v(" "),
               _c("th", [_vm._v("Total")]),
               _vm._v(" "),
-              _c("td", [
-                _vm._v(_vm._s(_vm.minutesForHumans(_vm.totalDuration)))
-              ])
+              _c("td", [_vm._v(_vm._s(_vm.minutesForHumans(_vm.total)))])
             ])
           ])
         : _vm._e()
     ]
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("thead", [
-      _c("tr", [
-        _c("th", { staticClass: "w-1/5" }, [_vm._v("Begin")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "w-1/5" }, [_vm._v("End")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "w-1/5" }, [_vm._v("Duration")]),
-        _vm._v(" "),
-        _c("th", { staticClass: "w-2/5" }, [_vm._v("Comment")])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -37493,6 +37713,132 @@ var render = function() {
             }
           })
         ]
+      )
+    ]),
+    _vm._v(" "),
+    _c("td", { on: { click: _vm.destroy } }, [
+      _c(
+        "button",
+        {
+          staticClass:
+            "button text-xs bg-transparent text-red-500 hover:text-red-800 button-block"
+        },
+        [_vm._v("DELETE")]
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&":
+/*!*************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& ***!
+  \*************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("tr", [
+    _c("td", [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.element.start_at,
+            expression: "element.start_at"
+          }
+        ],
+        ref: "start_at",
+        staticClass: "form-input-table",
+        class: { "form-input-error": _vm.errors.includes("start_at") },
+        attrs: { type: "text" },
+        domProps: { value: _vm.element.start_at },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.element, "start_at", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.element.end_at,
+            expression: "element.end_at"
+          }
+        ],
+        ref: "end_at",
+        staticClass: "form-input-table",
+        class: { "form-input-error": _vm.errors.includes("end_at") },
+        attrs: { type: "text" },
+        domProps: { value: _vm.element.end_at },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.element, "end_at", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", [_vm._v(_vm._s(_vm.duration))]),
+    _vm._v(" "),
+    _c("td", [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.element.comment,
+            expression: "element.comment"
+          }
+        ],
+        ref: "comment",
+        staticClass: "form-input-table",
+        class: { "form-input-error": _vm.errors.includes("comment") },
+        attrs: { type: "text" },
+        domProps: { value: _vm.element.comment },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(_vm.element, "comment", $event.target.value)
+          }
+        }
+      })
+    ]),
+    _vm._v(" "),
+    _c("td", { on: { click: _vm.store } }, [
+      _c(
+        "button",
+        {
+          staticClass:
+            "button text-xs text-blue-500 hover:text-blue-800 button-block"
+        },
+        [_vm._v("SAVE")]
       )
     ])
   ])
@@ -49659,9 +50005,11 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
+	"./components/Dashboard.vue": "./resources/js/components/Dashboard.vue",
 	"./components/ToggleButton.vue": "./resources/js/components/ToggleButton.vue",
 	"./components/TrackingTable.vue": "./resources/js/components/TrackingTable.vue",
-	"./components/TrackingTableRow.vue": "./resources/js/components/TrackingTableRow.vue"
+	"./components/TrackingTableRow.vue": "./resources/js/components/TrackingTableRow.vue",
+	"./components/TrackingTableRowCreate.vue": "./resources/js/components/TrackingTableRowCreate.vue"
 };
 
 
@@ -49783,6 +50131,75 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue":
+/*!***********************************************!*\
+  !*** ./resources/js/components/Dashboard.vue ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true& */ "./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true&");
+/* harmony import */ var _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Dashboard.vue?vue&type=script&lang=js& */ "./resources/js/components/Dashboard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "040e2ab9",
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Dashboard.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue?vue&type=script&lang=js&":
+/*!************************************************************************!*\
+  !*** ./resources/js/components/Dashboard.vue?vue&type=script&lang=js& ***!
+  \************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./Dashboard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Dashboard.vue?vue&type=template&id=040e2ab9&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Dashboard_vue_vue_type_template_id_040e2ab9_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
@@ -49988,6 +50405,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRow_vue_vue_type_template_id_53ddffee___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRow_vue_vue_type_template_id_53ddffee___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/TrackingTableRowCreate.vue":
+/*!************************************************************!*\
+  !*** ./resources/js/components/TrackingTableRowCreate.vue ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& */ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&");
+/* harmony import */ var _TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TrackingTableRowCreate.vue?vue&type=script&lang=js& */ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/TrackingTableRowCreate.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TrackingTableRowCreate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& ***!
+  \*******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

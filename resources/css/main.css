@@ -97,12 +97,20 @@ html, body {
     @apply .text-red-500 .text-xs .italic;
 }
 
-.button {
-    @apply .bg-teal-500 .text-white .font-bold .py-2 .px-4 .rounded .appearance-none;
+.form-input-table {
+    @apply .form-input-xs .border .border-gray-300 .leading-normal .bg-white;
 }
 
-.button:hover {
-    @apply .bg-teal-400
+.button {
+    @apply .font-bold .py-2 .px-4 .rounded .appearance-none;
+}
+
+.button-info {
+    @apply .bg-teal-500 .text-white;
+}
+
+.button-info:hover {
+    @apply .bg-teal-800 .text-white;
 }
 
 .button-block {
@@ -122,7 +130,7 @@ html, body {
 }
 
 .table tbody tr:hover {
-    @apply .bg-teal-100 .cursor-pointer;
+    @apply .bg-gray-200 .cursor-pointer;
 }
 
 @tailwind utilities;

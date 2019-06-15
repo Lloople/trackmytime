@@ -13,17 +13,6 @@
             </div>
         @endif
 
-        <h2 class="text-3xl mt-8">
-            @if ($totalToday)
-
-            You've worked <span class="font-black text-teal-500">{{ $totalToday }}</span> hours today.
-            @else
-                Today is empty. Maybe you forgot to track your time? 🤔
-            @endif
-
-        </h2>
-
-        <tracking-table :rows='@json($todayRegisters)'></tracking-table>
-
+        <dashboard :rows='@json($todayRegisters)' day="{{ now()->format('Y-m-d') }}"></dashboard>
     </div>
 @endsection

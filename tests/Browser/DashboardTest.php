@@ -2,7 +2,6 @@
 
 namespace Tests\Browser;
 
-use App\Models\Timesheet;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;

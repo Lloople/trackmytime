@@ -16,6 +16,7 @@
                        @keyup.enter.prevent="update">
             </div>
         </td>
+        <td @click="destroy"><button class="button text-xs bg-transparent text-red-500 hover:text-red-800 button-block">DELETE</button></td>
     </tr>
 </template>
 
@@ -49,6 +50,19 @@
                         this.commentHasError = false
                     } else {
                         this.commentHasError = true
+                    }
+                })
+            },
+            destroy: function () {
+                if (!confirm("Are you sure you want to delete this record?")) {
+                    return
+                }
+
+                axios.post(`timesheets/${this.element.id}`, {
+                    _method: 'DELETE'
+                }).then((response) => {
+                    if (response.status === 200) {
+                        window.location.reload()
                     }
                 })
             }

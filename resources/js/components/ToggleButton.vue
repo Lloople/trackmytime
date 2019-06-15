@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-col text-center">
-        <button @click="toggle" class="ml-2 text-xs uppercase button">{{ buttonText }} tracking</button>
+        <button @click="toggle" class="ml-2 text-xs uppercase button button-info">{{ buttonText }} tracking</button>
         <span>{{ elapsedTime }}</span>
     </div>
 </template>

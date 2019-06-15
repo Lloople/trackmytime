@@ -12,6 +12,7 @@ class DashboardController extends Controller
         $todayTimesheets = auth()->user()->timesheets()
             ->whereDate('start_at', now()->format('Y-m-d'))
             ->orWhereDate('end_at', now()->format('Y-m-d'))
+            ->orderBy('start_at')
             ->get();
 
         return view('dashboard', [

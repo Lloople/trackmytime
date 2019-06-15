@@ -7,7 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TrackingTest extends TestCase
+class TimesheetsTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -17,7 +17,7 @@ class TrackingTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->postJson(route('track.store'), [
+        $response = $this->actingAs($user)->postJson(route('timesheets.store'), [
             'start_at' => now()->subHours(3)->format('Y-m-d H:i:s'),
             'comment' => 'Put Captain Solo in the cargo hold.'
         ]);
@@ -36,11 +36,9 @@ class TrackingTest extends TestCase
     /** @test */
     public function duration_is_calculated()
     {
-
-        $this->withoutExceptionHandling();
         $user = factory(User::class)->create();
 
-        $response = $this->actingAs($user)->postJson(route('track.store'), [
+        $response = $this->actingAs($user)->postJson(route('timesheets.store'), [
             'start_at' => now()->subHours(3)->format('Y-m-d H:i:s'),
             'end_at' => now()->format('Y-m-d H:i:s'),
             'comment' => 'Put Captain Solo in the cargo hold.'
@@ -55,5 +53,19 @@ class TrackingTest extends TestCase
             'duration' => 180,
             'comment' => 'Put Captain Solo in the cargo hold.',
         ]);
+    }
+
+    /** @test */
+    public function can_delete_timesheets()
+    {
+        $user = factory(User::class)->create();
+
+        $timesheet = factory(Timesheet::class)->create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->deleteJson(route('timesheets.destroy', $timesheet));
+
+        $response->assertSuccessful();
+
+        $this->assertDatabaseMissing('timesheets', ['id' => $timesheet->id]);
     }
 }

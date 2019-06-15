@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CommentUpdateRequest extends FormRequest
+class TimesheetDestroyRequest extends FormRequest
 {
     public function authorize()
     {
@@ -13,8 +13,6 @@ class CommentUpdateRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'comment' => 'string',
-        ];
+        return [];
     }
 }

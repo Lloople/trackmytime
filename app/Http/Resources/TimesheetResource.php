@@ -10,8 +10,8 @@ class TimesheetResource extends JsonResource
     {
         return [
             'id' => (int) $this->id,
-            'start_at' => $this->start_at->format('d/m/Y H:i'),
-            'end_at' => $this->end_at->format('d/m/Y H:i'),
+            'start_at' => $this->start_at->format('H:i'),
+            'end_at' => $this->end_at->format('H:i'),
             'comment' => $this->comment,
             'duration' => $this->duration,
         ];
