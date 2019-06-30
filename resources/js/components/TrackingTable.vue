@@ -6,12 +6,12 @@
             <th class="w-1/6">End</th>
             <th class="w-1/6">Duration</th>
             <th class="w-2/6">Comment</th>
-            <th class="w-1/6"><button class="button text-xs button-block bg-white text-teal-500 hover:text-teal-800" @click="create">CREATE</button></th>
+            <th class="w-1/6"><button class="button text-xs button-block bg-white text-teal-500 hover:text-teal-800" @click="create">{{ newRecord ? 'HIDE' : 'CREATE' }}</button></th>
         </tr>
         </thead>
         <tbody>
-        <tracking-table-row-create v-if="newRecord" :day="day"></tracking-table-row-create>
-        <tracking-table-row v-for="(row, index) in rows" :key="index" :element="row"></tracking-table-row>
+        <tracking-table-row :element="{}" v-if="newRecord" :day="day"></tracking-table-row>
+        <tracking-table-row :day="day" v-for="(row, index) in rows" :key="index" :element="row"></tracking-table-row>
         <tr v-if="rows.length === 0">
             <td>-</td>
             <td>-</td>
@@ -49,7 +49,7 @@
         },
         methods: {
             create: function () {
-                this.newRecord = true
+                this.newRecord = ! this.newRecord
             }
         }
     }

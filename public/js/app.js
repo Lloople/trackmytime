@@ -2013,7 +2013,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     create: function create() {
-      this.newRecord = true;
+      this.newRecord = !this.newRecord;
     }
   }
 });
@@ -2030,6 +2030,45 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/timeFormat */ "./resources/js/mixins/timeFormat.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2057,35 +2096,47 @@ __webpack_require__.r(__webpack_exports__);
   name: "TrackingTableRow",
   mixins: [_mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__["timeFormat"]],
   props: {
-    element: Object
+    element: Object,
+    day: String
   },
   data: function data() {
     return {
       editable: false,
-      commentHasError: false
+      errors: []
     };
   },
   methods: {
-    edit: function edit() {
+    edit: function edit(element) {
       var _this = this;
 
       this.editable = true;
       this.$nextTick(function () {
-        _this.$refs.comment.focus();
+        _this.$refs[element].focus();
       });
     },
-    update: function update() {
+    updateOrCreate: function updateOrCreate() {
       var _this2 = this;
 
-      axios.post("timesheets/".concat(this.element.id, "/comment"), {
-        comment: this.element.comment,
-        _method: 'PUT'
+      var method = 'POST';
+      var url = 'timesheets';
+
+      if (this.element.hasOwnProperty('id')) {
+        method = 'PUT';
+        url += "/".concat(this.element.id);
+      }
+
+      axios.post(url, {
+        _method: method,
+        start_at: this.prepareDateForBackend(this.element.start_at),
+        end_at: this.prepareDateForBackend(this.element.end_at),
+        comment: this.element.comment
       }).then(function (response) {
+        if (response.status === 201) {
+          window.location.reload();
+        }
+
         if (response.status === 200) {
           _this2.editable = false;
-          _this2.commentHasError = false;
-        } else {
-          _this2.commentHasError = true;
         }
       });
     },
@@ -2101,96 +2152,51 @@ __webpack_require__.r(__webpack_exports__);
           window.location.reload();
         }
       });
+    },
+    prepareDateForBackend: function prepareDateForBackend(date) {
+      var semicolons = (date.match(/:/g) || []).length;
+
+      if (semicolons === 0) {
+        date += ':00:00';
+      } else if (semicolons === 1) {
+        date += ':00';
+      }
+
+      return "".concat(this.day, " ").concat(date);
     }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixins/timeFormat */ "./resources/js/mixins/timeFormat.js");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: "TrackingTableRowCreate",
-  mixins: [_mixins_timeFormat__WEBPACK_IMPORTED_MODULE_0__["timeFormat"]],
-  props: {
-    day: String
-  },
-  data: function data() {
-    return {
-      element: {
-        start_at: '',
-        end_at: '',
-        comment: ''
-      },
-      errors: []
-    };
   },
   computed: {
     duration: function duration() {
-      if (this.element.start_at === '' || this.element.end_at === '') {
+      if (!this.element.hasOwnProperty('id') || this.element.start_at === '' || this.element.end_at === '') {
         return '00:00';
-      } // TODO: There's a bug here, S 21:34 & E 22:50 marks 99:16 instead of 01:16
+      }
+
+      var _this$element$end_at$ = this.element.end_at.split(':').map(function (time) {
+        return parseInt(time);
+      }),
+          _this$element$end_at$2 = _slicedToArray(_this$element$end_at$, 2),
+          endAtHour = _this$element$end_at$2[0],
+          endAtMinutes = _this$element$end_at$2[1];
+
+      var _this$element$start_a = this.element.start_at.split(':').map(function (time) {
+        return parseInt(time);
+      }),
+          _this$element$start_a2 = _slicedToArray(_this$element$start_a, 2),
+          startAtHour = _this$element$start_a2[0],
+          startAtMinutes = _this$element$start_a2[1]; // Check for midnight
 
 
-      var minutesEndAt = this.element.end_at.split(':')[0] * 60 + this.element.end_at.split(':')[1];
-      var minutesStartAt = this.element.start_at.split(':')[0] * 60 + this.element.start_at.split(':')[1];
-      var duration = minutesEndAt - minutesStartAt;
+      if (endAtHour < startAtHour) {
+        return '00:00';
+      }
+
+      var duration = endAtHour * 60 + (endAtMinutes || 0) - (startAtHour * 60 + (startAtMinutes || 0));
 
       if (duration < 0 || duration == null || !duration) {
         return '00:00';
       }
 
       return this.minutesForHumans(duration);
-    }
-  },
-  methods: {
-    store: function store() {
-      if (!this.validateData()) {
-        return;
-      }
-
-      axios.post("timesheets", {
-        start_at: "".concat(this.day, " ").concat(this.element.start_at, ":00"),
-        end_at: "".concat(this.day, " ").concat(this.element.end_at, ":00"),
-        comment: this.element.comment
-      }).then(function (response) {
-        if (response.status === 201) {
-          window.location.reload();
-        }
-      });
-    },
-    validateData: function validateData() {
-      /**
-       * TODO: Missing validations
-       * start_at
-       *      !== ''
-       *      > 00:00
-       * end_at
-       *      !== ''
-       *      < [25]:[60]
-       * start_at < end_at
-       *
-       */
-      return this.errors.length === 0;
     }
   }
 });
@@ -37569,7 +37575,7 @@ var render = function() {
                   "button text-xs button-block bg-white text-teal-500 hover:text-teal-800",
                 on: { click: _vm.create }
               },
-              [_vm._v("CREATE")]
+              [_vm._v(_vm._s(_vm.newRecord ? "HIDE" : "CREATE"))]
             )
           ])
         ])
@@ -37579,13 +37585,13 @@ var render = function() {
         "tbody",
         [
           _vm.newRecord
-            ? _c("tracking-table-row-create", { attrs: { day: _vm.day } })
+            ? _c("tracking-table-row", { attrs: { element: {}, day: _vm.day } })
             : _vm._e(),
           _vm._v(" "),
           _vm._l(_vm.rows, function(row, index) {
             return _c("tracking-table-row", {
               key: index,
-              attrs: { element: row }
+              attrs: { day: _vm.day, element: row }
             })
           }),
           _vm._v(" "),
@@ -37643,203 +37649,267 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("tr", [
-    _c("td", [_vm._v(_vm._s(_vm.element.start_at))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.element.end_at))]),
-    _vm._v(" "),
-    _c("td", [_vm._v(_vm._s(_vm.minutesForHumans(_vm.element.duration)))]),
-    _vm._v(" "),
-    _c("td", { on: { click: _vm.edit } }, [
-      _c(
-        "div",
-        {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: !_vm.editable,
-              expression: "! editable"
-            }
-          ]
-        },
-        [_vm._v("\n            " + _vm._s(_vm.element.comment) + "\n        ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.editable,
-              expression: "editable"
-            }
-          ]
-        },
-        [
-          _c("input", {
+    _c(
+      "td",
+      {
+        on: {
+          click: function($event) {
+            return _vm.edit("start_at")
+          }
+        }
+      },
+      [
+        _c(
+          "div",
+          {
             directives: [
               {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.element.comment,
-                expression: "element.comment"
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.editable,
+                expression: "! editable"
               }
-            ],
-            ref: "comment",
-            staticClass:
-              "form-input-xs border border-gray-300 leading-normal bg-white",
-            class: { "form-input-error": _vm.commentHasError },
-            attrs: { type: "text" },
-            domProps: { value: _vm.element.comment },
-            on: {
-              keyup: function($event) {
-                if (
-                  !$event.type.indexOf("key") &&
-                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                ) {
-                  return null
-                }
-                $event.preventDefault()
-                return _vm.update($event)
-              },
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.element, "comment", $event.target.value)
-              }
-            }
-          })
-        ]
-      )
-    ]),
-    _vm._v(" "),
-    _c("td", { on: { click: _vm.destroy } }, [
-      _c(
-        "button",
-        {
-          staticClass:
-            "button text-xs bg-transparent text-red-500 hover:text-red-800 button-block"
-        },
-        [_vm._v("DELETE")]
-      )
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&":
-/*!*************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& ***!
-  \*************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("tr", [
-    _c("td", [
-      _c("input", {
-        directives: [
+            ]
+          },
+          [_vm._v(_vm._s(_vm.element.start_at))]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
           {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.element.start_at,
-            expression: "element.start_at"
-          }
-        ],
-        ref: "start_at",
-        staticClass: "form-input-table",
-        class: { "form-input-error": _vm.errors.includes("start_at") },
-        attrs: { type: "text" },
-        domProps: { value: _vm.element.start_at },
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.editable,
+                expression: "editable"
+              }
+            ]
+          },
+          [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.element.start_at,
+                  expression: "element.start_at"
+                }
+              ],
+              ref: "start_at",
+              staticClass:
+                "form-input-xs border border-gray-300 leading-normal bg-white",
+              class: { "form-input-error": _vm.errors.includes("start_at") },
+              attrs: { type: "text" },
+              domProps: { value: _vm.element.start_at },
+              on: {
+                keyup: function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  $event.preventDefault()
+                  return _vm.updateOrCreate($event)
+                },
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.element, "start_at", $event.target.value)
+                }
+              }
+            })
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
+    _c(
+      "td",
+      {
         on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.element, "start_at", $event.target.value)
+          click: function($event) {
+            return _vm.edit("end_at")
           }
         }
-      })
-    ]),
-    _vm._v(" "),
-    _c("td", [
-      _c("input", {
-        directives: [
+      },
+      [
+        _c(
+          "div",
           {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.element.end_at,
-            expression: "element.end_at"
-          }
-        ],
-        ref: "end_at",
-        staticClass: "form-input-table",
-        class: { "form-input-error": _vm.errors.includes("end_at") },
-        attrs: { type: "text" },
-        domProps: { value: _vm.element.end_at },
-        on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.element, "end_at", $event.target.value)
-          }
-        }
-      })
-    ]),
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.editable,
+                expression: "! editable"
+              }
+            ]
+          },
+          [_vm._v(_vm._s(_vm.element.end_at))]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.editable,
+                expression: "editable"
+              }
+            ]
+          },
+          [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.element.end_at,
+                  expression: "element.end_at"
+                }
+              ],
+              ref: "end_at",
+              staticClass:
+                "form-input-xs border border-gray-300 leading-normal bg-white",
+              class: { "form-input-error": _vm.errors.includes("end_at") },
+              attrs: { type: "text" },
+              domProps: { value: _vm.element.end_at },
+              on: {
+                keyup: function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  $event.preventDefault()
+                  return _vm.updateOrCreate($event)
+                },
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.element, "end_at", $event.target.value)
+                }
+              }
+            })
+          ]
+        )
+      ]
+    ),
     _vm._v(" "),
     _c("td", [_vm._v(_vm._s(_vm.duration))]),
     _vm._v(" "),
-    _c("td", [
-      _c("input", {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.element.comment,
-            expression: "element.comment"
-          }
-        ],
-        ref: "comment",
-        staticClass: "form-input-table",
-        class: { "form-input-error": _vm.errors.includes("comment") },
-        attrs: { type: "text" },
-        domProps: { value: _vm.element.comment },
+    _c(
+      "td",
+      {
         on: {
-          input: function($event) {
-            if ($event.target.composing) {
-              return
-            }
-            _vm.$set(_vm.element, "comment", $event.target.value)
+          click: function($event) {
+            return _vm.edit("comment")
           }
         }
-      })
-    ]),
+      },
+      [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.editable,
+                expression: "! editable"
+              }
+            ]
+          },
+          [
+            _vm._v(
+              "\n            " + _vm._s(_vm.element.comment) + "\n        "
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.editable,
+                expression: "editable"
+              }
+            ]
+          },
+          [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.element.comment,
+                  expression: "element.comment"
+                }
+              ],
+              ref: "comment",
+              staticClass:
+                "form-input-xs border border-gray-300 leading-normal bg-white",
+              class: { "form-input-error": _vm.errors.includes("comment") },
+              attrs: { type: "text" },
+              domProps: { value: _vm.element.comment },
+              on: {
+                keyup: function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  $event.preventDefault()
+                  return _vm.updateOrCreate($event)
+                },
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.element, "comment", $event.target.value)
+                }
+              }
+            })
+          ]
+        )
+      ]
+    ),
     _vm._v(" "),
-    _c("td", { on: { click: _vm.store } }, [
-      _c(
-        "button",
-        {
-          staticClass:
-            "button text-xs text-blue-500 hover:text-blue-800 button-block"
-        },
-        [_vm._v("SAVE")]
-      )
+    _c("td", [
+      !_vm.editable && _vm.element.start_at !== "undefined"
+        ? _c(
+            "button",
+            {
+              staticClass:
+                "button text-xs bg-transparent text-red-500 hover:text-red-800 button-block",
+              on: { click: _vm.destroy }
+            },
+            [_vm._v("\n            DELETE\n        ")]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.editable
+        ? _c(
+            "button",
+            {
+              staticClass:
+                "button text-xs bg-transparent text-teal-500 hover:text-teal-800 button-block",
+              on: { click: _vm.updateOrCreate }
+            },
+            [_vm._v("\n            SAVE\n        ")]
+          )
+        : _vm._e()
     ])
   ])
 }
@@ -50008,8 +50078,7 @@ var map = {
 	"./components/Dashboard.vue": "./resources/js/components/Dashboard.vue",
 	"./components/ToggleButton.vue": "./resources/js/components/ToggleButton.vue",
 	"./components/TrackingTable.vue": "./resources/js/components/TrackingTable.vue",
-	"./components/TrackingTableRow.vue": "./resources/js/components/TrackingTableRow.vue",
-	"./components/TrackingTableRowCreate.vue": "./resources/js/components/TrackingTableRowCreate.vue"
+	"./components/TrackingTableRow.vue": "./resources/js/components/TrackingTableRow.vue"
 };
 
 
@@ -50405,75 +50474,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRow_vue_vue_type_template_id_53ddffee___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRow_vue_vue_type_template_id_53ddffee___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/TrackingTableRowCreate.vue":
-/*!************************************************************!*\
-  !*** ./resources/js/components/TrackingTableRowCreate.vue ***!
-  \************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& */ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&");
-/* harmony import */ var _TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TrackingTableRowCreate.vue?vue&type=script&lang=js& */ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/TrackingTableRowCreate.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&":
-/*!*************************************************************************************!*\
-  !*** ./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TrackingTableRowCreate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& ***!
-  \*******************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TrackingTableRowCreate.vue?vue&type=template&id=1fe272ec&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TrackingTableRowCreate_vue_vue_type_template_id_1fe272ec___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

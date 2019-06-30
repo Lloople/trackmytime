@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Tracking;
+namespace App\Http\Controllers\Timesheets;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TimesheetStoreRequest;
