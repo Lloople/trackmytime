@@ -83,4 +83,34 @@ class DashboardTest extends DuskTestCase
         });
     }
 
+    /** @test */
+    public function can_edit_a_timesheet()
+    {
+        factory(Timesheet::class)->create([
+            'user_id' => $this->user->id,
+            'start_at' => now()->format('Y-m-d 12:15:00'),
+            'end_at' => now()->format('Y-m-d 13:00:00'),
+            'duration' => '45',
+            'comment' => 'First timesheet'
+        ]);
+
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->user)
+                ->visit('dashboard')
+                ->click('@container-start')
+                ->type('@start', '12:00')
+                ->type('@end', '13:00')
+                ->type('@comment', 'First timesheet modified')
+                ->press('SAVE')
+                ->pause(250)
+                ->assertSee('First timesheet modified');
+        });
+
+        $this->assertDatabaseHas('timesheets', [
+            'start_at' => now()->format('Y-m-d 12:00:00'),
+            'duration' => 60,
+            'comment' => 'First timesheet modified'
+        ]);
+    }
+
 }
