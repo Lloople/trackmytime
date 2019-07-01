@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use App\Models\Timesheet;
 use App\Models\User;
+use Facebook\WebDriver\Exception\UnexpectedAlertOpenException;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
@@ -113,4 +114,29 @@ class DashboardTest extends DuskTestCase
         ]);
     }
 
+    /** @test */
+    public function can_delete_a_timesheet()
+    {
+        factory(Timesheet::class)->create([
+            'user_id' => $this->user->id,
+            'start_at' => now()->format('Y-m-d 12:15:00'),
+            'end_at' => now()->format('Y-m-d 13:00:00'),
+            'duration' => '45',
+            'comment' => 'First timesheet'
+        ]);
+
+        $this->expectException(UnexpectedAlertOpenException::class);
+
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->user)
+                ->visit('dashboard')
+                ->press('DELETE')
+                ->acceptDialog()
+                ->waitForReload()
+                ->assertDontSee('First timesheet');
+        });
+
+        $this->assertDatabaseMissing('timesheets', ['user_id' => $this->user->id]);
+
+    }
 }
