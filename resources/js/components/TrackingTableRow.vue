@@ -1,43 +1,43 @@
 <template>
     <tr>
-        <td @click="edit('start_at')">
-            <div v-show="! editable">{{ element.start_at }}</div>
+        <td @click="edit('start')">
+            <div v-show="! editable">{{ timesheet.start }}</div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
-                       :class="{ 'form-input-error' : errors.includes('start_at')}"
-                       ref="start_at"
+                       :class="{ 'form-input-error' : errors.includes('start')}"
+                       ref="start"
                        type="text"
-                       v-model="element.start_at"
+                       v-model="timesheet.start"
                        @keyup.enter.prevent="updateOrCreate">
             </div>
         </td>
-        <td @click="edit('end_at')">
-            <div v-show="! editable">{{ element.end_at }}</div>
+        <td @click="edit('end')">
+            <div v-show="! editable">{{ timesheet.end }}</div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
-                       :class="{ 'form-input-error' : errors.includes('end_at')}"
-                       ref="end_at"
+                       :class="{ 'form-input-error' : errors.includes('end')}"
+                       ref="end"
                        type="text"
-                       v-model="element.end_at"
+                       v-model="timesheet.end"
                        @keyup.enter.prevent="updateOrCreate">
             </div>
         </td>
         <td>{{ duration }}</td>
         <td @click="edit('comment')">
             <div v-show="! editable">
-                {{ element.comment }}
+                {{ timesheet.comment }}
             </div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
                        :class="{ 'form-input-error' : errors.includes('comment')}"
                        ref="comment"
                        type="text"
-                       v-model="element.comment"
+                       v-model="timesheet.comment"
                        @keyup.enter.prevent="updateOrCreate">
             </div>
         </td>
         <td>
-            <button v-if="! editable && element.start_at !== 'undefined'"
+            <button v-if="! editable && start !== ''"
                     @click="destroy"
                     class="button text-xs bg-transparent text-red-500 hover:text-red-800 button-block">
                 DELETE
@@ -58,11 +58,28 @@
         name: "TrackingTableRow",
         mixins: [timeFormat],
         props: {
-            element: Object,
+            id: {
+                type: Number,
+                default: null
+            },
+            start: {
+                type: String,
+                default: ''
+            },
+            end: {
+                type: String,
+                default: ''
+            },
+            comment: String,
             day: String
         },
         data() {
             return {
+                timesheet: {
+                    start: this.start,
+                    end: this.end,
+                    comment: this.comment,
+                },
                 editable: false,
                 errors: []
             }
@@ -75,16 +92,17 @@
             updateOrCreate: function () {
                 let method = 'POST'
                 let url = 'timesheets'
-                if (this.element.hasOwnProperty('id')) {
+
+                if (this.id !== null) {
                     method = 'PUT'
-                    url += `/${this.element.id}`
+                    url += `/${this.id}`
                 }
 
                 axios.post(url, {
                     _method: method,
-                    start_at: this.prepareDateForBackend(this.element.start_at),
-                    end_at: this.prepareDateForBackend(this.element.end_at),
-                    comment: this.element.comment,
+                    start_at: this.prepareDateForBackend(this.timesheet.start),
+                    end_at: this.prepareDateForBackend(this.timesheet.end),
+                    comment: this.timesheet.comment,
                 }).then((response) => {
                     if (response.status === 201) {
                         window.location.reload()
@@ -100,7 +118,7 @@
                     return
                 }
 
-                axios.post(`timesheets/${this.element.id}`, {
+                axios.post(`timesheets/${this.id}`, {
                     _method: 'DELETE'
                 }).then((response) => {
                     if (response.status === 200) {
@@ -122,15 +140,14 @@
         },
         computed: {
             duration: function () {
-
-                if (! this.element.hasOwnProperty('id') ||
-                    this.element.start_at === '' ||
-                    this.element.end_at === '' ) {
+                // TODO: Bug here, the current duration is not getting updated on the fly
+                if (this.timesheet.start === '' || this.timesheet.end === '') {
                     return '00:00'
                 }
 
-                let [endAtHour, endAtMinutes] = this.element.end_at.split(':').map(time => parseInt(time))
-                let [startAtHour, startAtMinutes] = this.element.start_at.split(':').map(time => parseInt(time))
+
+                let [endAtHour, endAtMinutes] = this.timesheet.end.split(':').map(time => parseInt(time))
+                let [startAtHour, startAtMinutes] = this.timesheet.start.split(':').map(time => parseInt(time))
 
                 // Check for midnight
                 if (endAtHour < startAtHour) {

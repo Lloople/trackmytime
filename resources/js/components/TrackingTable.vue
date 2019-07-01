@@ -10,8 +10,14 @@
         </tr>
         </thead>
         <tbody>
-        <tracking-table-row :element="{}" v-if="newRecord" :day="day"></tracking-table-row>
-        <tracking-table-row :day="day" v-for="(row, index) in rows" :key="index" :element="row"></tracking-table-row>
+        <tracking-table-row v-if="newRecord"
+                            :day="day"></tracking-table-row>
+        <tracking-table-row v-for="(row, index) in rows" :key="index"
+                            :day="day"
+                            :id="row.id"
+                            :start="row.start_at"
+                            :end="row.end_at"
+                            :comment="row.comment"></tracking-table-row>
         <tr v-if="rows.length === 0">
             <td>-</td>
             <td>-</td>
