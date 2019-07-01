@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use App\Models\Timesheet;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
@@ -65,4 +66,21 @@ class DashboardTest extends DuskTestCase
         $this->assertNull($this->user->tracking_since);
         $this->assertDatabaseHas('timesheets', ['user_id' => $this->user->id]);
     }
+
+    /** @test */
+    public function can_create_a_timesheet()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($this->user)
+                ->visit('dashboard')
+                ->press('CREATE')
+                ->type('@start', '10')
+                ->type('@end', '12')
+                ->type('@comment', 'First timesheet')
+                ->press('SAVE')
+                ->waitForReload()
+                ->assertSee('First timesheet');
+        });
+    }
+
 }

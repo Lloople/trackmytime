@@ -1,21 +1,23 @@
 <template>
     <tr>
-        <td @click="edit('start')">
+        <td @click="edit('start')" dusk="container-start">
             <div v-show="! editable">{{ timesheet.start }}</div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
                        :class="{ 'form-input-error' : errors.includes('start')}"
+                       dusk="start"
                        ref="start"
                        type="text"
                        v-model="timesheet.start"
                        @keyup.enter.prevent="updateOrCreate">
             </div>
         </td>
-        <td @click="edit('end')">
+        <td @click="edit('end')" dusk="container-end">
             <div v-show="! editable">{{ timesheet.end }}</div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
                        :class="{ 'form-input-error' : errors.includes('end')}"
+                       dusk="end"
                        ref="end"
                        type="text"
                        v-model="timesheet.end"
@@ -23,13 +25,14 @@
             </div>
         </td>
         <td>{{ duration }}</td>
-        <td @click="edit('comment')">
+        <td @click="edit('comment')" dusk="container-comment">
             <div v-show="! editable">
                 {{ timesheet.comment }}
             </div>
             <div v-show="editable">
                 <input class="form-input-xs border border-gray-300 leading-normal bg-white"
                        :class="{ 'form-input-error' : errors.includes('comment')}"
+                       dusk="comment"
                        ref="comment"
                        type="text"
                        v-model="timesheet.comment"
@@ -71,7 +74,16 @@
                 default: ''
             },
             comment: String,
-            day: String
+            day: String,
+            editOnBoot: {
+                type: Boolean,
+                default: false
+            }
+        },
+        mounted() {
+            if (this.editable) {
+                this.$nextTick(() => { this.$refs.start.focus() })
+            }
         },
         data() {
             return {
@@ -80,7 +92,7 @@
                     end: this.end,
                     comment: this.comment,
                 },
-                editable: false,
+                editable: this.editOnBoot,
                 errors: []
             }
         },
@@ -114,7 +126,7 @@
                 })
             },
             destroy: function () {
-                if (!confirm("Are you sure you want to delete this record?")) {
+                if (! confirm("Are you sure you want to delete this record?")) {
                     return
                 }
 

@@ -11,7 +11,8 @@
         </thead>
         <tbody>
         <tracking-table-row v-if="newRecord"
-                            :day="day"></tracking-table-row>
+                            :day="day"
+                            :editOnBoot="true"></tracking-table-row>
         <tracking-table-row v-for="(row, index) in rows" :key="index"
                             :day="day"
                             :id="row.id"
